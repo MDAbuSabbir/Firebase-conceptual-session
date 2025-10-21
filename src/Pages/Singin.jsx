@@ -1,11 +1,12 @@
 import {
+  GithubAuthProvider,
   GoogleAuthProvider,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
 } from "firebase/auth";
 import React, { useState } from "react";
-import { FaEyeSlash } from "react-icons/fa";
+import { FaEyeSlash, FaGithub } from "react-icons/fa";
 import { IoEyeOutline } from "react-icons/io5";
 import { Link } from "react-router";
 import { toast } from "react-toastify";
@@ -16,6 +17,7 @@ const Singin = () => {
   const [show, setShow] = useState(false);
   const [user, setUser] = useState(null);
   const googleProvide = new GoogleAuthProvider();
+  const githubProvider = new GithubAuthProvider()
 
   const loginWithEmail = (e) => {
     e.preventDefault();
@@ -60,23 +62,23 @@ const Singin = () => {
       })
       .catch((e) => {
         toast.error(e.code);
-      
-    if (e.code === "auth/email-already-in-use") {
-      toast.error("⚠️ এই ইমেইলটি আগেই ব্যবহার করা হয়েছে। অন্য ইমেইল দিন।");
-    } else if (e.code === "auth/invalid-email") {
-      toast.error("❌ দয়া করে একটি বৈধ ইমেইল দিন।");
-    } else if (e.code === "auth/weak-password") {
-      toast.error("🔒 পাসওয়ার্ড অন্তত ৮ অক্ষরের এবং শক্তিশালী হতে হবে।");
-    } else if (e.code === "auth/missing-password") {
-      toast.error("⚠️ পাসওয়ার্ড ফিল্ড খালি রাখা যাবে না।");
-    } else if (e.code === "auth/network-request-failed") {
-      toast.error("🌐 ইন্টারনেট সংযোগ পরীক্ষা করুন।");
-    } else if (e.code === "auth/internal-error") {
-      toast.error("❗ সার্ভারে সমস্যা হয়েছে। কিছুক্ষণ পরে চেষ্টা করুন।");
-    } else {
-      toast.error("❗ কিছু ভুল হয়েছে। আবার চেষ্টা করুন।");
-    }
-    });
+
+        if (e.code === "auth/email-already-in-use") {
+          toast.error("⚠️ এই ইমেইলটি আগেই ব্যবহার করা হয়েছে। অন্য ইমেইল দিন।");
+        } else if (e.code === "auth/invalid-email") {
+          toast.error("❌ দয়া করে একটি বৈধ ইমেইল দিন।");
+        } else if (e.code === "auth/weak-password") {
+          toast.error("🔒 পাসওয়ার্ড অন্তত ৮ অক্ষরের এবং শক্তিশালী হতে হবে।");
+        } else if (e.code === "auth/missing-password") {
+          toast.error("⚠️ পাসওয়ার্ড ফিল্ড খালি রাখা যাবে না।");
+        } else if (e.code === "auth/network-request-failed") {
+          toast.error("🌐 ইন্টারনেট সংযোগ পরীক্ষা করুন।");
+        } else if (e.code === "auth/internal-error") {
+          toast.error("❗ সার্ভারে সমস্যা হয়েছে। কিছুক্ষণ পরে চেষ্টা করুন।");
+        } else {
+          toast.error("❗ কিছু ভুল হয়েছে। আবার চেষ্টা করুন।");
+        }
+      });
   };
   const singInWithGoogle = () => {
     signInWithPopup(auth, googleProvide)
@@ -89,6 +91,18 @@ const Singin = () => {
         toast.error(error.message);
       });
   };
+
+  const singInWithGithub = () =>{
+    signInWithPopup(auth, githubProvider)
+    .then((res) => {
+        console.log(res.user);
+        setUser(res.user);
+        toast.success("Singed In via Github");
+      })
+      .catch((error) => {
+        toast.error(error.message);
+      })
+  }
 
   const handleSignOut = () => {
     signOut(auth)
@@ -200,6 +214,43 @@ const Singin = () => {
                 </svg>
                 Login with Google
               </button>
+              <button 
+                onClick={singInWithGithub}
+                type="button"
+                className="btn bg-white text-black border-[#e5e5e5] mb-4"
+              >
+                {/* <svg
+                  aria-label="Google logo"
+                  width="16"
+                  height="16"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 512 512"
+                >
+                
+                  <g>
+                    <path d="m0 0H512V512H0" fill="#fff"></path>
+                    <path
+                      fill="#34a853"
+                      d="M153 292c30 82 118 95 171 60h62v48A192 192 0 0190 341"
+                    ></path>
+                    <path
+                      fill="#4285f4"
+                      d="m386 400a140 175 0 0053-179H260v74h102q-7 37-38 57"
+                    ></path>
+                    <path
+                      fill="#fbbc02"
+                      d="m90 341a208 200 0 010-171l63 49q-12 37 0 73"
+                    ></path>
+                    <path
+                      fill="#ea4335"
+                      d="m153 219c22-69 116-109 179-50l55-54c-78-75-230-72-297 55"
+                    ></path>
+                  </g>
+                </svg> */}
+                <FaGithub></FaGithub> Login with Github
+              </button>
+              
+              
               <p className="flex justify-center items-center gap-3">
                 New to Our Website?{" "}
                 <Link to={"/signup"} className="text-blue-700 underline">
